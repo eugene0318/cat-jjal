@@ -60,12 +60,19 @@
       };
 
       const Form = ({ handleFormSubmit }) => {
+        const [value, setValue] = React.useState("");
+
+        function handleInputChange(e) {
+          setValue(e.target.value.toUpperCase());
+        }
         return (
           <form onSubmit={handleFormSubmit}>
             <input
               type="text"
               name="name"
               placeholder="영어 대사를 입력해주세요"
+              value={value}
+              onChange={handleInputChange}
             />
             <button type="submit">생성</button>
           </form>
@@ -100,23 +107,15 @@
       //   </div>
       // );
 
-      const MainCard = ({ img }) => {
-        function handleHeartClick() {
-          console.log("heart clicked");
-        }
-        function handleHeartMouseOver() {
-          console.log("heart mouse over");
-        }
+      const MainCard = ({ img, handleHeartClick }) => {
+        // function handleHeartMouseOver() {
+        //   console.log("heart mouse over");
+        // }
         // console.log(props);
         return (
           <div className="main-card">
             <img src={img} alt="고양이" width="400" />
-            <button
-              onClick={handleHeartClick}
-              onMouseOver={handleHeartMouseOver}
-            >
-              🤍
-            </button>
+            <button onClick={handleHeartClick}>🤍</button>
           </div>
         );
       };
@@ -133,17 +132,12 @@
       //   </ul>
       // );
 
-      function Favorites() {
+      function Favorites({ favorites }) {
         return (
           <ul className="favorites">
-            <CatItem
-              img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn"
-              title="cat1"
-            />
-            <CatItem
-              img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript"
-              title="cat2"
-            />
+            {favorites.map((cat) => (
+              <CatItem img={cat} key={cat} />
+            ))}
           </ul>
         );
       }
@@ -157,22 +151,35 @@
       sayHello("유진");
       sayHello("그리고 여러분");
       const App = () => {
-        const [counter, setCounter] = React.useState(100);
+        const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
+        const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn";
+        const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
 
-        console.log("counter : ", counter);
+        const cats = [CAT1, CAT2];
+
+        const [counter, setCounter] = React.useState(100);
+        const [mainCat, setMainCat] = React.useState(CAT1);
+        const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
+        //console.log("counter : ", counter);
+
+        function handleHeartClick() {
+          console.log("heart clicked");
+          setFavorites([...favorites, CAT3]);
+        }
 
         function handleFormSubmit(event) {
           event.preventDefault();
-          console.log("form submited");
+          //console.log("form submited");
           setCounter(counter + 1);
+          setMainCat(CAT2);
         }
 
         return (
           <div>
             <Title>{counter}번째 고양이 가라사대</Title>
             <Form handleFormSubmit={handleFormSubmit} />
-            <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" />
-            <Favorites />
+            <MainCard img={mainCat} handleHeartClick={handleHeartClick} />
+            <Favorites favorites={favorites} />
           </div>
         );
       };
